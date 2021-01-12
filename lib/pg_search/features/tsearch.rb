@@ -132,9 +132,34 @@ module PgSearch
       def tsquery
         return "''" if query.blank?
 
+
         query_terms = query.split.compact
-        tsquery_terms = query_terms.map { |term| tsquery_for_term(term) }
+        tsquery_terms = query_terms.map { |term| construct_ts_query(term) }
         tsquery_terms.join(options[:any_word] ? ' || ' : ' && ')
+      end
+
+      def construct_ts_query(term)
+        if term.include?('&')
+          ts_query_and(term)
+        elsif term.include?('|')
+          ts_query_or(term)
+        elsif term.include?('<->')
+          ts_query_consecutive(term)
+        else
+          tsquery_for_term(term)
+        end
+      end
+
+      def ts_query_consecutive(term)
+        "(#{term.split('<->').map { |term| tsquery_for_term(term) }.join(' <-> ')})"
+      end
+      
+      def ts_query_and(term)
+        "(#{term.split('&').map { |term| tsquery_for_term(term) }.join(' && ')})"
+      end
+      
+      def ts_query_or(term)
+        "(#{term.split('|').map { |term| tsquery_for_term(term) }.join(' || ')})"
       end
 
       def tsdocument
