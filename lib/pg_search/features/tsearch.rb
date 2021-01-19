@@ -173,7 +173,7 @@ module PgSearch
           tsdocument_terms << tsvector_columns.map do |tsvector_column|
             column_name = connection.quote_column_name(tsvector_column)
 
-            config.ignore.include?(:accents) ? "unaccent(#{quoted_table_name}.#{column_name})" : "#{quoted_table_name}.#{column_name}"
+            "#{quoted_table_name}.#{column_name}" 
           end
         end
 
