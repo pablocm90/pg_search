@@ -151,15 +151,15 @@ module PgSearch
       end
 
       def ts_query_consecutive(term)
-        "(#{term.split('<->').map { |term| tsquery_for_term(term) }.join(' <-> ')})"
+        "(#{term.split('<->').map { |term| construct_ts_query(term) }.join(' <-> ')})"
       end
       
       def ts_query_and(term)
-        "(#{term.split('&').map { |term| tsquery_for_term(term) }.join(' && ')})"
+        "(#{term.split('&').map { |term| construct_ts_query(term) }.join(' && ')})"
       end
       
       def ts_query_or(term)
-        "(#{term.split('|').map { |term| tsquery_for_term(term) }.join(' || ')})"
+        "(#{term.split('|').map { |term| construct_ts_query(term) }.join(' || ')})"
       end
 
       def tsdocument
